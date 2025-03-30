@@ -1,12 +1,14 @@
 import os
 import requests
 from tqdm import tqdm
+from dotenv import load_dotenv
 
 # === CONFIGURATION ===
-PIXABAY_API_KEY = "34905836-b13256b540490930d41bfdd88"
-QUERY = "building"
+load_dotenv()
+PIXABAY_API_KEY = os.getenv("PIXABAY_API_KEY")
+QUERY = "lake"
 NUM_IMAGES = 200
-offset = 1800
+offset = 2000
 root = "/media/slsecret/E624108524105B3F/Users/simon/Downloads/"
 OUTPUT_DIR = os.path.join(root, "bg_pixabay")
 
