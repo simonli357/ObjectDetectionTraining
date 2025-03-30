@@ -6,8 +6,8 @@ from matplotlib.widgets import Button
 from matplotlib.backend_bases import MouseButton
 
 # Folder paths
-image_folder = '/home/slsecret/Downloads/bfmc_data/images/misc'
-labels_folder = '/home/slsecret/Downloads/bfmc_data/images/misc_labels'
+image_folder = '/media/slsecret/E624108524105B3F/Users/simon/Downloads/datasets_g/images'
+labels_folder = '/media/slsecret/E624108524105B3F/Users/simon/Downloads/datasets_g/labels'
 os.makedirs(labels_folder, exist_ok=True)
 
 # Class names and color map

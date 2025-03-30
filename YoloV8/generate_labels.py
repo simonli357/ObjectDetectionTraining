@@ -6,7 +6,7 @@ import tqdm
 # === CONFIGURATION ===
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(CURRENT_DIR, 'citycocov2lgtclab_20.pt')
-name = 'team2021'
+name = '/../lane_test'
 INPUT_DIR = f"/home/slsecret/Downloads/bfmc_data/images/{name}"
 OUTPUT_LABEL_DIR = f"/home/slsecret/Downloads/bfmc_data/images/{name}_labels"
 CONF_THRESHOLD = 0.25  # Confidence threshold for filtering detections

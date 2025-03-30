@@ -6,7 +6,7 @@ import argparse
 import torch
 import model.detector
 import utils.utils
-folder_path = "C:\\Users\\simon\\Downloads\\Yolo-FastestV2\\car_test_padded"
+folder_path = "/home/slsecret/Downloads/bfmc_data/test_set/images"
 weights = 'amy9sl'
 if __name__ == '__main__':
     #指定训练配置文件
