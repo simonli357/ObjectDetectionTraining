@@ -1,0 +1,10 @@
+output_name: TestSetAll2
+output_base_dir: /home/slsecret/Downloads/bfmc_data/TestSetData
+datasets:
+  - lab
+  - rf2024
+  # - rf2024_flipped
+  - car_test_padded
+  - team2021
+  - rf0309b
+  - xinya

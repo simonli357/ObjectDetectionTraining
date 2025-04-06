@@ -3,10 +3,11 @@ datasets:
   - datasets_city
   - datasets_a
   - datasets_bb
-  - datasets_c
-  - datasets_e
+  # - datasets_c
+  # - datasets_e
   - datasets_g
-  - datasets_john
+  # - datasets_john
   - datasets_s
-output_dir: /media/slsecret/E624108524105B3F/Users/simon/Downloads/datasets_combined_city
+  - datasets_x
+output_dir: /media/slsecret/E624108524105B3F/Users/simon/Downloads/datasets_allx2
 val_split: 0.1

@@ -35,6 +35,7 @@ def clean_and_fix_labels(label_dir):
 
                     fixed_lines.append(f"{cls} {x:.6f} {y:.6f} {w:.6f} {h:.6f}")
                 except ValueError:
+                    print("error: ", file)
                     continue
 
         if fixed_lines:
@@ -49,4 +50,5 @@ def clean_and_fix_labels(label_dir):
     print("🧹 Empty label files were deleted.")
 
 # Example usage
-clean_and_fix_labels("/media/slsecret/E624108524105B3F/Users/simon/Downloads/TestSetFull/labels")
+# clean_and_fix_labels("/media/slsecret/E624108524105B3F/Users/simon/Downloads/TestSetFull/labels")
+clean_and_fix_labels("/media/slsecret/E624108524105B3F/Users/simon/Downloads/datasets_g/labels")

@@ -1,9 +1,10 @@
-path: /media/slsecret/E624108524105B3F/Users/simon/Downloads/datasets_combined_city
+path: /media/slsecret/E624108524105B3F/Users/simon/Downloads/datasets_allx2
+num_epochs: 15
 
 train: images/train
 # val: images/val
-val: images/test
-test: /home/slsecret/Downloads/bfmc_data/TestSetFull/
+val: /home/slsecret/Downloads/bfmc_data/TestSetAll2/
+test: /home/slsecret/Downloads/bfmc_data/TestSetAll2/
 
 # Classes
 names:

@@ -1,4 +1,3 @@
-# Full-featured annotation tool with matplotlib
 import os
 import cv2
 import matplotlib
@@ -16,21 +15,17 @@ for k in ['a', 'p', 'o', 'i', 'x', 'n', 'b', 'q', 'left', 'right', 'up', 'down']
     if k in matplotlib.rcParams['keymap.zoom']:
         matplotlib.rcParams['keymap.zoom'].remove(k)
 # ---------------- Configuration ----------------
-# root = "/media/slsecret/E624108524105B3F/Users/simon/Downloads/datasets_combined/"
-root = "/home/slsecret/Downloads/bfmc_data/basement1/"
+root = "/media/slsecret/E624108524105B3F/Users/simon/Downloads/datasets_bb/"
+# root = "/home/slsecret/Downloads/bfmc_data/TestSetData/rf2024/"
+# root = "/home/slsecret/Downloads/bfmc_data/rf2024c/"
 name1 = "lab"
 name1 = ""
 
-# root = "/home/slsecret/Downloads/bfmc_data/"
-# name1 = "labeled/team2021"
-# name1 = "labeled/rf2024"
-# name1 = "lane_test"
-IMAGE_FOLDER = root + "images/"
-print("Looking for images in:", IMAGE_FOLDER)
-LABEL_FOLDER = root + "labels/"
+IMAGE_FOLDER = root + "images"
+LABEL_FOLDER = root + "labels"
 TRASH_FOLDER = root + name1 + "_trash"
-IMAGE_FOLDER = "/home/slsecret/Downloads/bfmc_data/TestSetFull/images"
-LABEL_FOLDER = "/home/slsecret/ObjectDetectionTraining/2025/results/core_city12/test_results/labels"
+# IMAGE_FOLDER = "/home/slsecret/Downloads/bfmc_data/TestSetFull/images"
+# LABEL_FOLDER = "/home/slsecret/ObjectDetectionTraining/2025/results/core12/test_results/labels"
 os.makedirs(LABEL_FOLDER, exist_ok=True)
 
 CLASS_NAMES = [
@@ -52,6 +47,28 @@ class BoundingBox:
         self.selected = False
         self.handle_selected = None
 
+    def clamp_to_bounds(self, img_w, img_h):
+        # Ensure width and height are non-negative
+        self.w = max(1, self.w)
+        self.h = max(1, self.h)
+
+        # Clamp x/y to image borders
+        if self.x < 0:
+            self.w += self.x  # reduce width
+            self.x = 0
+        if self.y < 0:
+            self.h += self.y  # reduce height
+            self.y = 0
+
+        # Prevent x+w or y+h from going out of bounds
+        if self.x + self.w > img_w:
+            self.w = img_w - self.x
+        if self.y + self.h > img_h:
+            self.h = img_h - self.y
+
+        # Final safety clamp
+        self.w = max(1, self.w)
+        self.h = max(1, self.h)
     def get_rect(self):
         return self.x, self.y, self.w, self.h
 
@@ -123,7 +140,6 @@ class AnnotationApp:
             [f for f in os.listdir(IMAGE_FOLDER) if f.lower().endswith((".jpg", ".png"))],
             key=natural_sort_key
         )
-        # self.image_files = sorted([f for f in os.listdir(IMAGE_FOLDER) if f.endswith((".jpg", ".png"))])
         self.index = 0
         self.boxes = []
         self.selected_box = None
@@ -149,6 +165,7 @@ class AnnotationApp:
         plt.show()
 
     def load_image(self):
+        self.zoom = 1.0
         self.boxes.clear()
         img_path = os.path.join(IMAGE_FOLDER, self.image_files[self.index])
         self.image = cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_BGR2RGB)
@@ -181,16 +198,19 @@ class AnnotationApp:
         if conf < conf_thresh:
             return None
 
-        x = int((xc - w / 2) * self.img_w)
-        y = int((yc - h / 2) * self.img_h)
-        return cid, x, y, int(w * self.img_w), int(h * self.img_h), conf
+        x = (xc - w / 2) * self.img_w
+        y = (yc - h / 2) * self.img_h
+        w_pixels = w * self.img_w
+        h_pixels = h * self.img_h
+        return cid, x, y, w_pixels, h_pixels, conf
 
     def box_to_yolo(self, box):
         xc = (box.x + box.w / 2) / self.img_w
         yc = (box.y + box.h / 2) / self.img_h
         w = box.w / self.img_w
         h = box.h / self.img_h
-        return f"{box.class_id} {xc:.6f} {yc:.6f} {w:.6f} {h:.6f}"
+        
+        return f"{box.class_id} {xc:.8f} {yc:.8f} {w:.8f} {h:.8f}"
 
     def redraw(self):
         self.ax.cla()  # even better than .clear()
@@ -285,10 +305,7 @@ class AnnotationApp:
             x, y = min(x0, x1), min(y0, y1)
             w, h = abs(x1 - x0), abs(y1 - y0)
             if w > 5 and h > 5:
-                result = self.yolo_to_box(line)
-                if result is not None:
-                    cid, x, y, w, h = result
-                    self.boxes.append(BoundingBox(cid, x, y, w, h))
+                self.boxes.append(BoundingBox(self.current_class, int(x), int(y), int(w), int(h)))
             self.adding_box = False
             self.start = None
             self.redraw()
@@ -332,6 +349,8 @@ class AnnotationApp:
             self.selected_box = None
             self.redraw()
         elif event.key == 's':
+            for box in self.boxes:
+                box.clamp_to_bounds(self.img_w, self.img_h)
             label_path = os.path.join(LABEL_FOLDER, os.path.splitext(self.image_files[self.index])[0] + ".txt")
             with open(label_path, 'w') as f:
                 for box in self.boxes:
@@ -372,6 +391,20 @@ class AnnotationApp:
                 print("Done")
                 plt.close()
         elif event.key == 'n':
+            # while self.index + 1 < len(self.image_files):
+            #     accepted_indices = [9]
+            #     # accepted_indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12]
+            #     self.index += 1
+            #     label_path = os.path.join(LABEL_FOLDER, os.path.splitext(self.image_files[self.index])[0] + ".txt")
+            #     if os.path.exists(label_path):
+            #         with open(label_path) as f:
+            #             for line in f:
+            #                 parts = line.strip().split()
+            #                 if len(parts) >= 1 and int(float(parts[0])) in accepted_indices:
+            #                     self.load_image()
+            #                     return
+            # print("No more images with class 9.")
+            # plt.close()
             self.index += 1
             if self.index < len(self.image_files):
                 self.load_image()
@@ -384,6 +417,36 @@ class AnnotationApp:
                 self.load_image()
         elif event.key == 'q':
             plt.close()
+        elif event.key == 'c':
+            for box in self.boxes:
+                class_dir = os.path.join(root, str(box.class_id))
+                os.makedirs(class_dir, exist_ok=True)
+
+                x1 = int(max(0, round(box.x)))
+                y1 = int(max(0, round(box.y)))
+                x2 = int(min(self.img_w, round(box.x + box.w)))
+                y2 = int(min(self.img_h, round(box.y + box.h)))
+
+                cropped = self.image[y1:y2, x1:x2]
+                if cropped.size == 0:
+                    continue  # Skip invalid crops
+
+                base_name = os.path.splitext(self.image_files[self.index])[0]
+                crop_name = f"{base_name}_{box.class_id}_{x1}_{y1}.jpg"
+                crop_path = os.path.join(class_dir, crop_name)
+
+                cv2.imwrite(crop_path, cv2.cvtColor(cropped, cv2.COLOR_RGB2BGR))
+            original_title = self.ax.get_title()
+            self.ax.set_title(f"{original_title} — ✅ Saved Cropped")
+            self.fig.canvas.draw()
+
+            # Revert title after short delay
+            def reset_title():
+                time.sleep(1.5)
+                self.ax.set_title(original_title)
+                self.fig.canvas.draw()
+            threading.Thread(target=reset_title, daemon=True).start()
+            print("Cropped images saved as ", crop_path)
         elif event.key == 'left':
             dx = 20
             self.xlim = (self.xlim[0] - dx, self.xlim[1] - dx)
@@ -401,6 +464,5 @@ class AnnotationApp:
             self.ylim = (self.ylim[0] + dy, self.ylim[1] + dy)
             self.redraw()
 
-# Run the tool
 if __name__ == "__main__":
     AnnotationApp()
