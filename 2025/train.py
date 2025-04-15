@@ -8,7 +8,7 @@ yaml_path = os.path.join(current_dir, 'config/train_config.yaml')
 results_dir = os.path.join(current_dir, 'runs', 'train')
 augment_path = os.path.join(current_dir, 'config/augment_config_noflip.yaml')
 model_path = os.path.join(current_dir,'models/yolov8n.pt')
-NAME = 'core_allxc'
+NAME = 'core_allxd'
 num_epochs = 13
 
 with open(yaml_path, 'r') as f:

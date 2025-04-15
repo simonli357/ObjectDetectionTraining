@@ -6,8 +6,11 @@ datasets:
   # - datasets_c
   # - datasets_e
   - datasets_g
-  # - datasets_john
+  - datasets_john
   - datasets_s
   - datasets_x
-output_dir: /media/slsecret/E624108524105B3F/Users/simon/Downloads/datasets_allx2
+  - frames0331
+  - frames0331b
+  - frames_sim0407
+output_dir: /media/slsecret/E624108524105B3F/Users/simon/Downloads/datasets_allx3
 val_split: 0.1

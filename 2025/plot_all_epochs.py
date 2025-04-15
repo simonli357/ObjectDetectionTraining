@@ -2,11 +2,21 @@ import os
 import re
 import pandas as pd
 import matplotlib.pyplot as plt
+import yaml
 
 # --- CONFIGURATION ---
-weights_dir = "/home/slsecret/ObjectDetectionTraining/2025/runs/train/core_noflip7/weights"
-metrics_dir = os.path.join(weights_dir, "metrics")
-output_dir = os.path.join(weights_dir, "plots")
+weights_dir = "/home/slsecret/ObjectDetectionTraining/2025/runs/train/core_noflip313/weights"
+yaml_path = "/home/slsecret/ObjectDetectionTraining/2025/config/train_config.yaml"
+with open(yaml_path, 'r') as f:
+    config = yaml.safe_load(f)
+class_names = config['names']
+num_classes = len(class_names)
+# test: /home/slsecret/Downloads/bfmc_data/TestSetAll/
+# get the last part of the path
+testset_name = config['test'].split('/')[-2]
+print(f"Testset name: {testset_name}")
+metrics_dir = os.path.join(weights_dir, "metrics_"+testset_name)
+output_dir = os.path.join(weights_dir, "plots_"+testset_name)
 os.makedirs(output_dir, exist_ok=True)
 
 # --- Load all val_metrics CSVs ---

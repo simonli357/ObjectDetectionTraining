@@ -4,15 +4,19 @@ import pandas as pd
 from ultralytics import YOLO
 
 # --- CONFIGURATION ---
-model_dir = "/home/slsecret/ObjectDetectionTraining/2025/runs/train/core_allxc13/weights"
+model_dir = "/home/slsecret/ObjectDetectionTraining/2025/runs/train/core_noflip313/weights"
 yaml_path = "/home/slsecret/ObjectDetectionTraining/2025/config/train_config.yaml"
 device = 0  # or 'cuda:0'
-os.makedirs(os.path.join(model_dir, "metrics"), exist_ok=True)
 # Load class names from YAML
 with open(yaml_path, 'r') as f:
     config = yaml.safe_load(f)
 class_names = config['names']
 num_classes = len(class_names)
+# test: /home/slsecret/Downloads/bfmc_data/TestSetAll/
+# get the last part of the path
+testset_name = config['test'].split('/')[-2]
+print(f"Testset name: {testset_name}")
+os.makedirs(os.path.join(model_dir, "metrics_"+testset_name), exist_ok=True)
 
 # Get all .pt files
 pt_files = [f for f in os.listdir(model_dir) if f.endswith(".pt")]
@@ -71,6 +75,6 @@ for pt_file in pt_files:
     data.insert(0, overall)
 
     df = pd.DataFrame(data)
-    csv_path = os.path.join(model_dir, "metrics", f"{pt_file}_val_metrics.csv")
+    csv_path = os.path.join(model_dir, "metrics_"+testset_name, f"{pt_file}_val_metrics.csv")
     df.to_csv(csv_path, index=False)
     print(f"Saved: {csv_path}\n")

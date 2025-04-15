@@ -5,8 +5,8 @@ import tqdm
 
 # === CONFIGURATION ===
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(CURRENT_DIR, 'models', 'core_allxc13.pt')
-name = 'rf2024b'
+MODEL_PATH = os.path.join(CURRENT_DIR, 'models', 'core_allxd13.pt')
+name = 'vroom'
 root = "/home/slsecret/Downloads/bfmc_data"
 INPUT_DIR = os.path.join(root, name, 'images')
 OUTPUT_LABEL_DIR = os.path.join(root, name, 'labels')

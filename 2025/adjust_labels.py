@@ -1,18 +1,18 @@
 import os
 
 # Configuration
-LABEL_FOLDER = "path/to/your/labels"
-OUTPUT_FOLDER = "path/to/save/adjusted_labels"
+LABEL_FOLDER = "/media/slsecret/E624108524105B3F/Users/simon/Downloads/datasets_bb/labels"
+OUTPUT_FOLDER = "/media/slsecret/E624108524105B3F/Users/simon/Downloads/datasets_bb/labels_adjusted"
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 IMAGE_WIDTH = 640
 IMAGE_HEIGHT = 480
 
 # Adjustments in pixels
-SHIFT_X = 0.5       # horizontal shift (+right, −left)
-SHIFT_Y = 0.5       # vertical shift (+down, −up)
-DELTA_W = 0.5       # change in width (+bigger, −smaller)
-DELTA_H = 0.5       # change in height
+SHIFT_X = 0.       # horizontal shift (+right, −left)
+SHIFT_Y = 0.       # vertical shift (+down, −up)
+DELTA_W = -1       # change in width (+bigger, −smaller)
+DELTA_H = -1       # change in height
 
 def adjust_box(xc, yc, w, h):
     # Convert from YOLO-normalized to pixel
